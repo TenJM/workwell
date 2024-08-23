@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single Long Page Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            padding: 20px;
+            background-image: url('{{ url_for("static", filename="uploads/home.jpg") }}');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        .logo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .company-name {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        .intro-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            max-width: 800px;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .nav a, .nav .dropdown button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            background: none;
+        }
+        .dropdown {
+            position: relative;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #333;
+            min-width: 180px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        .dropdown-content a:hover {
+            background-color: #575757;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        section {
+            padding: 40px;
+            background-color: #f4f4f4;
+            display: none;
+        }
+        .home-section {
+            display: block;
+        }
+        .contact-section {
+            display: none;
+        }
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .form-group textarea {
+            height: 150px;
+        }
+        .form-group button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-group button:hover {
+            background-color: #555;
+        }
+        /* Slider Styles */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .slider {
+            position: relative;
+            width: 100%;
+            height: 400px; /* Adjust height as needed */
+        }
+        .slider img {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .slider .slider-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50%; /* Initial width of the slider */
+            height: 100%;
+            overflow: hidden;
+        }
+        .slider .slider-overlay img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slider .slider-handle {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 10px;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            cursor: ew-resize;
+            z-index: 1;
+        }
+        /* Service Section Styles */
+        .service-section {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .service-section h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .service-section p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .middle {
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent white background */
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .why-choose-us {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 20px;
+        }
+        
+        .service-item {
+            text-align: center;
+            max-width: 300px;
+            background: rgba(255, 255, 255, 0.8); /* Slightly transparent white background */
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .service-item img {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .service-item h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+        
+        .service-item p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        
+        /* Add general styling for icons */
+        .icon {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img src="{{ url_for('static', filename='uploads/home.jpg') }}" alt="Company Logo">
+    </div>
+    <div class="company-name">Your Company Name</div>
+    <div class="intro-text">
+        <h1>Turning Ordinary Photos into Extraordinary Visuals</h1>
+        <p>Welcome to Hipicinfotech, your go-to solution for all real estate photo editing needs. We specialize in transforming ordinary property images into stunning visuals that captivate and sell. Our team of expert editors is dedicated to providing high-quality, professional photo editing services that enhance the appeal of your real estate listings.</p>
+    </div>
+    <nav class="nav">
+        <a href="#home" onclick="showSection('home')">Home</a>
+        <div class="dropdown">
+            <button>Company</button>
+            <div class="dropdown-content">
+                <a href="#about-us" onclick="showSection('about-us')">About Us</a>
+                <a href="#contact" onclick="showSection('contact')">Contact Us</a>
+                <a href="#why-choose-us" onclick="showSection('why-choose-us')">Why Choose Us</a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<section id="home" class="home-section">
+    <div class="container">
+        <div class="service-section">
+            <h2>Our Services</h2>
+            <h3>High Dynamic Range (HDR) Enhancement</h3>
+            <p>Unlock the full spectrum of light and color with our HDR photo editing service. Transform your images into stunning masterpieces that pop with vibrant detail and dynamic contrast, ensuring they captivate and stand out from the crowd.</p>
+        </div>
+        <div class="slider-container">
+            <div class="slider-labels">
+                <span>Before</span>
+                <span>After</span>
+            </div>
+            <div class="slider">
+                <div class="slider-overlay">
+                    <img src="{{ url_for('static', filename='uploads/forest.jpg') }}" alt="Before Image">
+                </div>
+                <img src="{{ url_for('static', filename='uploads/home.jpg') }}" alt="After Image">
+                <div class="slider-handle"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="about-us" style="display: none;">
+    <div class="container">
+        <h2>About Us</h2>
+        <p>Learn more about our company, our mission, and our team.</p>
+    </div>
+</section>
+
+<section id="contact" style="display: none;">
+    <div class="container">
+        <h2>Contact Us</h2>
+        <p>We’re here to help! Whether you have questions about our services, need support, or want to discuss a project, feel free to get in touch with us. We look forward to connecting with you.</p>
+        
+        <form>
+            <div class="form-group">
+                <label for="name">Name *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message *</label>
+                <textarea id="message" name="message" required></textarea>
+            </div>
+            <div class="form-group">
+                <button type="submit">Get in Touch</button>
+            </div>
+        </form>
+
+        <p>Email: hitechinfotech11@gmail.com</p>
+        <p>Phone: Whatsapp: +917845898540</p>
+        <p>Available Monday to Friday, 9:00 AM – 6:00 PM</p>
+
+        <h3>Business Hours</h3>
+        <p>Monday to Friday: 9:00 AM – 6:00 PM</p>
+        <p>Saturday: 10:00 AM – 4:00 PM</p>
+        <p>Sunday: Closed</p>
+        <p>Thank you for reaching out to Hipicinfotech. We are committed to providing you with excellent service and support.</p>
+    </div>
+</section>
+
+<section id="why-choose-us" style="display: none;">
+    <div class="container">
+        <div class="middle">
+            <div class="why-choose-us">
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="static/uploads/home.jpg" alt="Definitive Work Icon"> <!-- Replace with actual icon path -->
+                    </div>
+                    <h3>Definitive Work</h3>
+                    <p>We guarantee top-notch quality in every project we undertake, ensuring that your images look their best.</p>
+                </div>
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="static/uploads/home.jpg" alt="On-Time Delivery Icon"> <!-- Replace with actual icon path -->
+                    </div>
+                    <h3>On-Time Delivery</h3>
+                    <p>Our standard turnaround time is 8-12 hours, with an urgent service option available in 4-6 hours, ensuring you meet your deadlines.</p>
+                </div>
+                <div class="service-item">
+                    <div class="icon">
+                        <img src="static/uploads/home.jpg" alt="Stable Quality Icon"> <!-- Replace with actual icon path -->
+                    </div>
+                    <h3>Stable Quality</h3>
+                    <p>Consistency is key in our work. We ensure stable quality across all your edited images, maintaining a professional standard.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2024 Your Name. All rights reserved.</p>
+    </div>
+</footer>
+
+<script>
+    function showSection(sectionId) {
+        document.querySelectorAll('section').forEach(section => {
+            section.style.display = 'none';
+        });
+        
+        document.getElementById(sectionId).style.display = 'block';
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        showSection('home');
+    });
+    
+    // Slider functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const slider = document.querySelector('.slider');
+        const sliderOverlay = document.querySelector('.slider-overlay');
+        const sliderHandle = document.querySelector('.slider-handle');
+        
+        let isDragging = false;
+        
+        const startDragging = (event) => {
+            isDragging = true;
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', stopDragging);
+        };
+        
+        const onMouseMove = (event) => {
+            if (isDragging) {
+                const rect = slider.getBoundingClientRect();
+                let newWidth = event.clientX - rect.left;
+                newWidth = Math.max(0, Math.min(newWidth, rect.width));
+                sliderOverlay.style.width = newWidth + 'px';
+                sliderHandle.style.left = newWidth + 'px';
+            }
+        };
+        
+        const stopDragging = () => {
+            isDragging = false;
+            document.removeEventListener('mousemove', onMouseMove);
+            document.removeEventListener('mouseup', stopDragging);
+        };
+        
+        sliderHandle.addEventListener('mousedown', startDragging);
+    });
+</script>
+
+</body>
+</html>
